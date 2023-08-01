@@ -14,11 +14,6 @@ function convertToInternationalFormat(number) {
     return `234${phoneNumber}`;
   }
 }
-console.log(convertToInternationalFormat("081-63-24-4139"));
-console.log(convertToInternationalFormat("8163244139"));
-console.log(convertToInternationalFormat("81-63-24-4139"));
-console.log(convertToInternationalFormat("08163244139"));
-console.log(convertToInternationalFormat("2348163244139"));
 
 async function translateText(text, source_language, destination_language) {
   const apiKey = process.env.OPENAI_KEY;
@@ -50,7 +45,6 @@ async function translateText(text, source_language, destination_language) {
         "Content-Type": "application/json",
       },
     });
-    console.log(response.data);
     const translation = response.data.choices[0].message.content.trim();
     return translation;
   } catch (error) {
@@ -79,14 +73,14 @@ server.route({
       request.payload;
 
     const convertedPhoneNumber = convertToInternationalFormat(phone_number);
-    console.log(convertedPhoneNumber);
+
     try {
       const translation = await translateText(
         text,
         source_language,
         target_language
       );
-      console.log(translation);
+
       const request = require("request");
       const data = {
         to: convertedPhoneNumber,
