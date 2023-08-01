@@ -3,22 +3,22 @@ const axios = require("axios");
 const dotenv = require("dotenv");
 dotenv.config();
 
-// function convertToInternationalFormat(number) {
-//   const phoneNumber = number.replace(/\D/g, "");
+function convertToInternationalFormat(number) {
+  const phoneNumber = number.replace(/\D/g, "");
 
-//   if (phoneNumber.startsWith("0")) {
-//     return `234${phoneNumber.slice(1)}`;
-//   } else if (phoneNumber.startsWith("234")) {
-//     return phoneNumber;
-//   } else {
-//     return `234${phoneNumber}`;
-//   }
-// }
-// console.log(convertToInternationalFormat("081-63-24-4139"));
-// console.log(convertToInternationalFormat("8163244139"));
-// console.log(convertToInternationalFormat("81-63-24-4139"));
-// console.log(convertToInternationalFormat("08163244139"));
-// console.log(convertToInternationalFormat("2348163244139"));
+  if (phoneNumber.startsWith("0")) {
+    return `234${phoneNumber.slice(1)}`;
+  } else if (phoneNumber.startsWith("234")) {
+    return phoneNumber;
+  } else {
+    return `234${phoneNumber}`;
+  }
+}
+console.log(convertToInternationalFormat("081-63-24-4139"));
+console.log(convertToInternationalFormat("8163244139"));
+console.log(convertToInternationalFormat("81-63-24-4139"));
+console.log(convertToInternationalFormat("08163244139"));
+console.log(convertToInternationalFormat("2348163244139"));
 
 async function translateText(text, source_language, destination_language) {
   const apiKey = process.env.OPENAI_KEY;
@@ -75,10 +75,11 @@ server.route({
   method: "POST",
   path: "/",
   handler: async (request, h) => {
-    const { phoneNumber, text, source_language, target_language } =
+    const { phone_number, text, source_language, target_language } =
       request.payload;
 
-    //   const convertedPhoneNumber = convertToInternationalFormat(phoneNumber);
+    const convertedPhoneNumber = convertToInternationalFormat(phone_number);
+    console.log(convertedPhoneNumber);
     try {
       const translation = await translateText(
         text,
@@ -88,7 +89,7 @@ server.route({
       console.log(translation);
       const request = require("request");
       const data = {
-        to: phoneNumber,
+        to: convertedPhoneNumber,
         from: "kokash",
         sms: translation,
         type: "plain",
