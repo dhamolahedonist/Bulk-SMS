@@ -72,7 +72,9 @@ server.route({
     const { phone_number, text, source_language, target_language } =
       request.payload;
 
-    const convertedPhoneNumber = convertToInternationalFormat(phone_number);
+    const convertedPhoneNumbers = phone_number.map(
+      convertToInternationalFormat
+    );
 
     try {
       const translation = await translateText(
@@ -82,27 +84,30 @@ server.route({
       );
 
       const request = require("request");
-      const data = {
-        to: convertedPhoneNumber,
-        from: "kokash",
-        sms: translation,
-        type: "plain",
-        channel: "generic",
-        api_key: process.env.TERMII_KEY,
-      };
-      const options = {
-        method: "POST",
-        url: "https://termii.com/api/sms/send",
-        headers: {
-          "Content-Type": ["application/json", "application/json"],
-        },
-        body: JSON.stringify(data),
-      };
+      convertedPhoneNumbers.forEach((convertedPhoneNumber) => {
+        const data = {
+          to: convertedPhoneNumber,
+          from: "kokash",
+          sms: translation,
+          type: "plain",
+          channel: "generic",
+          api_key: process.env.TERMII_KEY,
+        };
+        const options = {
+          method: "POST",
+          url: "https://termii.com/api/sms/send",
+          headers: {
+            "Content-Type": ["application/json", "application/json"],
+          },
+          body: JSON.stringify(data),
+        };
 
-      request(options, function (error, response) {
-        if (error) throw new Error(error);
-        console.log(response.body);
+        request(options, function (error, response) {
+          if (error) throw new Error(error);
+          console.log(response.body);
+        });
       });
+
       return { translation };
     } catch (error) {
       console.error("Error translating text", error);
